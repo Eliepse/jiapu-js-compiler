@@ -3,6 +3,9 @@ import BabelParser, { ParseResult } from "@babel/parser";
 import { File as BabelFile, Identifier, ImportDeclaration } from "@babel/types";
 import NodePath from "path";
 
+// @ts-ignore
+const generate = BabelGenerate.default as typeof BabelGenerate;
+
 const TS_TRANSPILER = new Bun.Transpiler({ loader: "ts", target: "browser" });
 
 const ID_GEN = (function* makeRangeIterator(
@@ -74,6 +77,6 @@ export class Module {
   }
 
   generate() {
-    return BabelGenerate(this.ast);
+    return generate(this.ast, {minified: true, compact: true, });
   }
 }

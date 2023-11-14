@@ -3,6 +3,9 @@ import { globSync } from "glob";
 import NodePath from "path";
 import { Module } from "./module";
 
+// @ts-ignore
+const traverse = BabelTraverse.default as typeof BabelTraverse;
+
 export class Bundle {
   private files: Array<string> = [];
   private modules = new Map<string, Module>();
@@ -43,7 +46,7 @@ export class Bundle {
   private aliasModuleDeclarations(id: string) {
     const module = this.getModule(id);
 
-    BabelTraverse(module.ast, {
+    traverse(module.ast, {
       Program: (path) => {
         Object.values(path.scope.getAllBindings()).forEach((binding) => {
           if (binding.path.type === "ImportSpecifier") {
@@ -65,7 +68,7 @@ export class Bundle {
   private handleModuleImportDeclarations(id: string) {
     const module = this.getModule(id);
 
-    BabelTraverse(module.ast, {
+    traverse(module.ast, {
       ImportDeclaration: (path) => {
         const node = path.node;
 
@@ -101,7 +104,7 @@ export class Bundle {
         path.skip();
       },
 
-      enter(path) {
+      enter: (path) => {
         if (path.type !== "Program" && path.type !== "ImportDeclaration") {
           path.skip();
         }
@@ -112,7 +115,7 @@ export class Bundle {
   private handleClassExtends(id: string) {
     const module = this.getModule(id);
 
-    BabelTraverse(module.ast, {
+    traverse(module.ast, {
       ClassDeclaration: (path) => {
         if (
           !path.node.superClass ||
