@@ -8,7 +8,7 @@ program.name("Jiapu Compiler")
 program.command("compile")
     .argument("<path>", "the path to the root directory of the source code")
     .option("-o, --outfile <path>", "the path to write the compiled code")
-    .option("--prod", "Minify the output", false)
+    .option("--minify", "Minify the output", false)
     .action(async (path, options) => {
         console.time("total");
 
