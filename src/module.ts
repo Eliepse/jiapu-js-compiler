@@ -2,6 +2,7 @@ import BabelGenerate from "@babel/generator";
 import BabelParser, { ParseResult } from "@babel/parser";
 import { File as BabelFile, Identifier, ImportDeclaration } from "@babel/types";
 import NodePath from "path";
+import {intToAlpha} from "./utils";
 
 // @ts-ignore
 const generate = BabelGenerate.default as typeof BabelGenerate;
@@ -16,7 +17,7 @@ const ID_GEN = (function* makeRangeIterator(
   let iterationCount = 0;
   for (let i = start; i < end; i += step) {
     iterationCount++;
-    yield i.toString(36);
+    yield intToAlpha(i);
   }
   return iterationCount;
 })(0);
