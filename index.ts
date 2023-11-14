@@ -8,14 +8,26 @@ program.name("Jiapu Compiler")
 program.command("compile")
     .argument("<path>", "the path to the root directory of the source code")
     .option("-o, --outfile <path>", "the path to write the compiled code")
+    .option("--prod", "Minify the output", false)
     .action(async (path, options) => {
         console.time("total");
 
         const bundle = new Bundle(path);
         await bundle.load();
         bundle.transform();
-        const code = bundle.generate();
-        const optimised = await minify(code, { toplevel: true, mangle: true, module: true })
+        let code = bundle.generate();
+
+        if("minify" in options && options.minify) {
+            console.time("minify")
+            const minification = await minify(code, { toplevel: true, mangle: true, module: true });
+
+            if(!minification.code) {
+                throw new Error("Failed to minify");
+            }
+
+            code = minification.code;
+            console.timeEnd("minify")
+        }
 
         if("outfile" in options) {
             await Bun.write(options.outfile as string, code);
